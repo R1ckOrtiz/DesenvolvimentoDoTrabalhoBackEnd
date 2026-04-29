@@ -7,6 +7,7 @@ __pycache__/
 
 .env
 CHECKLIST_TRABALHO_BACKEND.md
+*.db
 
 htmlcov/
 .coverage
