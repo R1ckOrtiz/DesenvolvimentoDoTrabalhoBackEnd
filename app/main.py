@@ -4,7 +4,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
+from app.api.routes.auth import router as auth_router
 from app.api.routes.unidades import router as unidades_router
+from app.api.routes.usuarios import router as usuarios_router
 from app.core.config import get_settings
 from app.core.errors import api_error_handler, validation_error_handler
 from app.db.init_db import create_db_and_seed
@@ -26,7 +28,9 @@ app = FastAPI(
 )
 app.add_exception_handler(HTTPException, api_error_handler)
 app.add_exception_handler(RequestValidationError, validation_error_handler)
+app.include_router(auth_router)
 app.include_router(unidades_router)
+app.include_router(usuarios_router)
 
 
 @app.get("/", tags=["Sistema"])

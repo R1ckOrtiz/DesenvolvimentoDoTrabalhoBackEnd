@@ -61,13 +61,25 @@ O seed inicial tambem roda automaticamente na primeira subida e cria:
 - 2 unidades
 - 3 produtos
 - cardapio por unidade com preco e quantidade disponivel
+- 1 usuario administrador
+- 1 usuario cliente
 
 As migrations ainda serao adicionadas em uma etapa futura do trabalho.
+
+## Usuarios de teste
+
+| Perfil | E-mail | Senha |
+| --- | --- | --- |
+| ADMIN | `admin@raizes.com` | `admin123` |
+| CLIENTE | `cliente@raizes.com` | `cliente123` |
 
 ## Endpoints iniciais
 
 - `GET /` - informacoes basicas da API
 - `GET /health` - verificacao simples de funcionamento
+- `POST /auth/login` - autentica usuario e retorna token Bearer
+- `GET /usuarios/me` - consulta usuario autenticado
+- `GET /usuarios/admin-check` - valida acesso exclusivo de administrador
 - `GET /unidades` - lista unidades ativas
 - `GET /unidades/{id}/cardapio` - lista produtos disponiveis por unidade
 
@@ -75,8 +87,21 @@ As migrations ainda serao adicionadas em uma etapa futura do trabalho.
 
 1. Subir a API com `uvicorn app.main:app --reload`
 2. Abrir o Swagger em `http://127.0.0.1:8000/docs`
-3. Chamar `GET /unidades`
-4. Usar um `id` retornado para chamar `GET /unidades/{id}/cardapio`
+3. Chamar `POST /auth/login` com o usuario administrador
+4. Copiar o `access_token` retornado e usar no botao `Authorize`
+5. Chamar `GET /usuarios/me`
+6. Chamar `GET /usuarios/admin-check`
+7. Chamar `GET /unidades`
+8. Usar um `id` retornado para chamar `GET /unidades/{id}/cardapio`
+
+Exemplo de corpo para login:
+
+```json
+{
+  "email": "admin@raizes.com",
+  "senha": "admin123"
+}
+```
 
 ## Swagger
 
