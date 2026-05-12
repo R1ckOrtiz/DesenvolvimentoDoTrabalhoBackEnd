@@ -82,6 +82,27 @@ As migrations ainda serao adicionadas em uma etapa futura do trabalho.
 - `GET /usuarios/admin-check` - valida acesso exclusivo de administrador
 - `GET /unidades` - lista unidades ativas
 - `GET /unidades/{id}/cardapio` - lista produtos disponiveis por unidade
+- `POST /pedidos` - cria pedido autenticado com itens
+- `GET /pedidos` - lista pedidos, com filtro opcional por `canalPedido`
+- `GET /pedidos/{id}` - consulta pedido pelo identificador
+
+## Pedido e canalPedido
+
+O campo `canalPedido` registra a origem operacional do pedido. Ele e um dado
+de dominio porque afeta analise de atendimento, operacao da unidade e futuras
+regras por canal.
+
+Valores aceitos:
+
+- `APP`
+- `TOTEM`
+- `BALCAO`
+- `PICKUP`
+- `WEB`
+
+Status atual documentado:
+
+- `CRIADO` - pedido registrado e aguardando proxima etapa do fluxo.
 
 ## Ordem sugerida para testar a entrega atual
 
@@ -93,6 +114,9 @@ As migrations ainda serao adicionadas em uma etapa futura do trabalho.
 6. Chamar `GET /usuarios/admin-check`
 7. Chamar `GET /unidades`
 8. Usar um `id` retornado para chamar `GET /unidades/{id}/cardapio`
+9. Criar um pedido em `POST /pedidos`
+10. Consultar o pedido criado em `GET /pedidos/{id}`
+11. Listar pedidos por canal em `GET /pedidos?canalPedido=APP`
 
 Exemplo de corpo para login:
 
@@ -100,6 +124,21 @@ Exemplo de corpo para login:
 {
   "email": "admin@raizes.com",
   "senha": "admin123"
+}
+```
+
+Exemplo de corpo para criar pedido:
+
+```json
+{
+  "unidadeId": 1,
+  "canalPedido": "APP",
+  "itens": [
+    {
+      "produtoId": 1,
+      "quantidade": 1
+    }
+  ]
 }
 ```
 
