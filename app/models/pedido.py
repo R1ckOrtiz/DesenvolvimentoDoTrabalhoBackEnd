@@ -17,6 +17,8 @@ class CanalPedido(str, Enum):
 
 class StatusPedido(str, Enum):
     CRIADO = "CRIADO"
+    PAGAMENTO_APROVADO = "PAGAMENTO_APROVADO"
+    PAGAMENTO_RECUSADO = "PAGAMENTO_RECUSADO"
 
 
 class Pedido(Base):
@@ -42,6 +44,10 @@ class Pedido(Base):
         back_populates="pedido",
         cascade="all, delete-orphan",
     )
+    pagamentos: Mapped[list["Pagamento"]] = relationship(
+        back_populates="pedido",
+        cascade="all, delete-orphan",
+    )
 
 
 class ItemPedido(Base):
@@ -56,3 +62,26 @@ class ItemPedido(Base):
 
     pedido: Mapped[Pedido] = relationship(back_populates="itens")
     produto: Mapped["Produto"] = relationship()
+
+
+class StatusPagamento(str, Enum):
+    APROVADO = "APROVADO"
+    RECUSADO = "RECUSADO"
+
+
+class Pagamento(Base):
+    __tablename__ = "pagamentos"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    pedido_id: Mapped[int] = mapped_column(ForeignKey("pedidos.id"), nullable=False)
+    status: Mapped[str] = mapped_column(String(30), nullable=False)
+    valor: Mapped[float] = mapped_column(Float, nullable=False)
+    codigo_transacao: Mapped[str] = mapped_column(String(80), nullable=False)
+    mensagem: Mapped[str] = mapped_column(String(255), nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    pedido: Mapped[Pedido] = relationship(back_populates="pagamentos")

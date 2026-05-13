@@ -5,7 +5,7 @@ from app.core.security import hash_password
 from app.db.base import Base
 from app.db.session import engine
 from app.models.catalogo import CardapioUnidade, Produto, Unidade
-from app.models.pedido import ItemPedido, Pedido
+from app.models.pedido import ItemPedido, Pagamento, Pedido
 from app.models.usuario import Usuario
 
 

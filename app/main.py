@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
 from app.api.routes.auth import router as auth_router
+from app.api.routes.pagamentos import router as pagamentos_router
 from app.api.routes.pedidos import router as pedidos_router
 from app.api.routes.unidades import router as unidades_router
 from app.api.routes.usuarios import router as usuarios_router
@@ -32,6 +33,7 @@ app.add_exception_handler(RequestValidationError, validation_error_handler)
 app.include_router(auth_router)
 app.include_router(unidades_router)
 app.include_router(pedidos_router)
+app.include_router(pagamentos_router)
 app.include_router(usuarios_router)
 
 
