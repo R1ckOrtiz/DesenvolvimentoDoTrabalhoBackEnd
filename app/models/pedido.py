@@ -19,6 +19,7 @@ class StatusPedido(str, Enum):
     CRIADO = "CRIADO"
     PAGAMENTO_APROVADO = "PAGAMENTO_APROVADO"
     PAGAMENTO_RECUSADO = "PAGAMENTO_RECUSADO"
+    CANCELADO = "CANCELADO"
 
 
 class Pedido(Base):

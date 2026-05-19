@@ -85,6 +85,7 @@ As migrations ainda serao adicionadas em uma etapa futura do trabalho.
 - `POST /pedidos` - cria pedido autenticado com itens
 - `GET /pedidos` - lista pedidos, com filtro opcional por `canalPedido`
 - `GET /pedidos/{id}` - consulta pedido pelo identificador
+- `PATCH /pedidos/{id}/cancelar` - cancela pedido ainda nao pago
 - `POST /pagamentos/mock` - simula pagamento aprovado ou recusado
 
 ## Pedido e canalPedido
@@ -106,6 +107,13 @@ Status atual documentado:
 - `CRIADO` - pedido registrado e aguardando proxima etapa do fluxo.
 - `PAGAMENTO_APROVADO` - pagamento mock aprovado.
 - `PAGAMENTO_RECUSADO` - pagamento mock recusado.
+- `CANCELADO` - pedido cancelado antes do pagamento.
+
+Regra de cancelamento:
+
+- apenas pedidos com status `CRIADO` podem ser cancelados;
+- ao cancelar, os itens voltam para a quantidade disponivel do cardapio;
+- pedidos ja pagos, recusados ou cancelados retornam `409`.
 
 ## Pagamento mock
 
@@ -134,7 +142,8 @@ Regras atuais:
 9. Criar um pedido em `POST /pedidos`
 10. Consultar o pedido criado em `GET /pedidos/{id}`
 11. Listar pedidos por canal em `GET /pedidos?canalPedido=APP`
-12. Simular pagamento em `POST /pagamentos/mock`
+12. Opcionalmente cancelar um pedido ainda nao pago em `PATCH /pedidos/{id}/cancelar`
+13. Simular pagamento em `POST /pagamentos/mock`
 
 Exemplo de corpo para login:
 

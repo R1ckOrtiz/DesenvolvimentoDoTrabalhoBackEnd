@@ -179,3 +179,53 @@ def consultar_pedido(
 
     _validar_acesso_ao_pedido(pedido, usuario)
     return _pedido_response(pedido)
+
+
+@router.patch(
+    "/{pedido_id}/cancelar",
+    response_model=PedidoResponse,
+    responses={
+        403: {"description": "Usuario sem permissao para cancelar este pedido"},
+        404: {"description": "Pedido nao encontrado"},
+        409: {"description": "Pedido nao pode ser cancelado no status atual"},
+    },
+)
+def cancelar_pedido(
+    pedido_id: int,
+    usuario: Usuario = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> PedidoResponse:
+    pedido = db.get(Pedido, pedido_id)
+    if pedido is None:
+        raise ApiError(
+            status_code=404,
+            error_code="PEDIDO_NAO_ENCONTRADO",
+            message="Pedido nao encontrado.",
+        )
+
+    _validar_acesso_ao_pedido(pedido, usuario)
+
+    if pedido.status != StatusPedido.CRIADO.value:
+        raise ApiError(
+            status_code=409,
+            error_code="TRANSICAO_STATUS_INVALIDA",
+            message="Apenas pedidos com status CRIADO podem ser cancelados.",
+            details={"statusAtual": pedido.status},
+        )
+
+    for item in pedido.itens:
+        item_cardapio = db.scalar(
+            select(CardapioUnidade).where(
+                CardapioUnidade.unidade_id == pedido.unidade_id,
+                CardapioUnidade.produto_id == item.produto_id,
+            )
+        )
+        if item_cardapio is not None:
+            item_cardapio.quantidade_disponivel += item.quantidade
+            item_cardapio.disponivel = True
+
+    pedido.status = StatusPedido.CANCELADO.value
+    db.commit()
+    db.refresh(pedido)
+
+    return _pedido_response(pedido)
